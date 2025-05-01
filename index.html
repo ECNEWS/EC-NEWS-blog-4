@@ -103,7 +103,13 @@
       }
     }
 
-    <script>
+    ...
+<img id="outputImage" style="display: none;">
+<br>
+<button id="downloadBtn" onclick="downloadImage()" style="display: none;">⬇️ इमेज डाउनलोड करें</button>
+
+<!-- यही स्क्रिप्ट यहाँ डालें -->
+<script>
   function generateImage() {
     const input = document.getElementById('imageInput');
     const text = document.getElementById('textInput').value;
@@ -137,4 +143,8 @@
     link.click();
   }
 </script>
+</body>
+</html>
+
+
 
