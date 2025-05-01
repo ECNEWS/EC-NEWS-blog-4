@@ -2,75 +2,71 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
+  <title>EC NEWS AI छवि संपादक</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>छवि संपादक - EC News</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: url('https://source.unsplash.com/1600x900/?ai,technology,india') no-repeat center center fixed;
-      background-size: cover;
+      background: linear-gradient(to right, #e0f7fa, #fce4ec);
       margin: 0;
-      padding: 0;
-      color: white;
-    }
-
-    header {
-      background: rgba(0, 0, 0, 0.6);
       padding: 20px;
       text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 50px auto;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
-    }
-
-    input, textarea, button {
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      font-size: 16px;
-    }
-
-    button {
-      background: #00c853;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #00a044;
-    }
-
-    #preview {
-      margin-top: 20px;
-      border-radius: 8px;
-      max-width: 100%;
-    }
-
-    #downloadBtn {
-      display: none;
-      margin-top: 10px;
-      background: #2196f3;
     }
 
     #flag {
       position: absolute;
       top: 10px;
-      right: 10px;
-      width: 40px;
+      left: 10px;
+      width: 60px;
+    }
+
+    header {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    input[type="file"], textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #outputImage {
+      max-width: 100%;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
+
   <img id="flag" src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg" alt="Indian Flag">
   <header>🖼️ EC NEWS AI छवि संपादक</header>
 
@@ -79,30 +75,42 @@
     <textarea id="textInput" placeholder="AI के लिए टेक्स्ट डालें (उदाहरण: एक किसान खेत में काम कर रहा है)"></textarea>
     <button onclick="generateImage()">AI से छवि बनाएँ</button>
 
-    <img id="preview" src="" alt="Preview" style="display:none;">
-    <a id="downloadBtn" download="ai-image.png">⬇️ छवि डाउनलोड करें</a>
+    <img id="outputImage" src="" alt="Generated Image" style="display:none;">
+    <br>
+    <button id="downloadBtn" onclick="downloadImage()" style="display:none;">📥 छवि डाउनलोड करें</button>
   </div>
 
   <script>
     function generateImage() {
+      const input = document.getElementById('imageInput');
       const text = document.getElementById('textInput').value;
-      if (!text) {
-        alert("कृपया कुछ टेक्स्ट डालें!");
-        return;
-      }
-
-      const imageUrl = `https://source.unsplash.com/600x400/?${encodeURIComponent(text)}`;
-      const preview = document.getElementById('preview');
+      const output = document.getElementById('outputImage');
       const downloadBtn = document.getElementById('downloadBtn');
 
-      preview.src = imageUrl;
-      preview.style.display = 'block';
-
-      preview.onload = function () {
-        downloadBtn.href = imageUrl;
-        downloadBtn.style.display = 'inline-block';
+      if (input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          output.src = e.target.result;
+          output.style.display = 'block';
+          downloadBtn.style.display = 'inline-block';
+        }
+        reader.readAsDataURL(input.files[0]);
+      } else if (text.trim()) {
+        // Future AI API से इमेज जनरेट हो सकेगा यहाँ
+        alert("AI इमेज जनरेशन API भविष्य में जोड़ा जाएगा।");
+      } else {
+        alert("कृपया एक छवि अपलोड करें या AI टेक्स्ट दर्ज करें।");
       }
     }
+
+    function downloadImage() {
+      const output = document.getElementById('outputImage');
+      const link = document.createElement('a');
+      link.href = output.src;
+      link.download = 'ECNEWS_image.png';
+      link.click();
+    }
   </script>
+
 </body>
 </html>
