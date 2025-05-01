@@ -68,17 +68,109 @@
 <body>
 
   <img id="flag" src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg" alt="Indian Flag">
-  <header>🖼️ EC NEWS AI छवि संपादक</header>
+<header>🖼️ EC NEWS AI छवि संपादक</header>
 
-  <div class="container">
-    <input type="file" id="imageInput" accept="image/*">
-    <textarea id="textInput" placeholder="AI के लिए टेक्स्ट डालें (उदाहरण: एक किसान खेत में काम कर रहा है)"></textarea>
-    <button onclick="generateImage()">AI से छवि बनाएँ</button>
+<div class="container">
+  <!-- AI छवि जनरेटर -->
+  <input type="file" id="imageInput" accept="image/*">
+  <textarea id="textInput" placeholder="AI के लिए टेक्स्ट डालें (उदाहरण: एक किसान खेत में काम कर रहा है)"></textarea>
+  <button onclick="generateImage()">AI से छवि बनाएँ</button>
 
-    <img id="outputImage" src="" alt="Generated Image" style="display:none;">
-    <br>
-    <button id="downloadBtn" onclick="downloadImage()" style="display:none;">📥 छवि डाउनलोड करें</button>
+  <img id="outputImage" src="" alt="Generated Image" style="display:none;">
+  <br>
+  <button id="downloadBtn" onclick="downloadImage()" style="display:none;">📥 छवि डाउनलोड करें</button>
+
+  <hr>
+
+  <!-- विडियो गॅलरी + बटन -->
+  <h2>🎥 विडियो गॅलरी +</h2>
+  <button onclick="document.getElementById('mediaUpload').click()">📁 विडियो/फोटो जोड़ें</button>
+  <input type="file" id="mediaUpload" accept="image/*,video/*" multiple style="display:none;">
+  <div id="mediaPreview" style="margin-top: 10px;"></div>
+
+  <hr>
+
+  <!-- 📝 ब्लॉग पोस्ट एरिया -->
+  <h2>📝 ब्लॉग पोस्ट</h2>
+  <div id="blogPostArea" contenteditable="true" style="border:1px solid #ccc; padding:10px; min-height:100px;">
+    यहाँ पर आप ब्लॉग लिख सकते हैं और मीडिया सीधे नीचे जुड़ जाएगा...
   </div>
+  <br>
+  <button onclick="downloadBlog()">📝 HTML ब्लॉग डाउनलोड करें</button>
+  <button onclick="downloadPDF()">📄 ब्लॉग PDF में डाउनलोड करें</button>
+</div>
+
+<!-- jsPDF CDN (PDF जनरेट करने के लिए) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+  function generateImage() {
+    const text = document.getElementById("textInput").value;
+    const outputImage = document.getElementById("outputImage");
+    outputImage.src = "https://via.placeholder.com/300x200.png?text=" + encodeURIComponent(text);
+    outputImage.style.display = "block";
+    document.getElementById("downloadBtn").style.display = "inline-block";
+  }
+
+  function downloadImage() {
+    const image = document.getElementById("outputImage");
+    const link = document.createElement('a');
+    link.href = image.src;
+    link.download = 'AI_Image.png';
+    link.click();
+  }
+
+  document.getElementById("mediaUpload").addEventListener("change", function(event) {
+    const preview = document.getElementById("mediaPreview");
+    const blogArea = document.getElementById("blogPostArea");
+
+    preview.innerHTML = "";
+    Array.from(event.target.files).forEach(file => {
+      const url = URL.createObjectURL(file);
+
+      if (file.type.startsWith("image/")) {
+        const img = document.createElement("img");
+        img.src = url;
+        img.style.maxWidth = "150px";
+        img.style.margin = "5px";
+        preview.appendChild(img);
+
+        const imgToInsert = `<img src="${url}" style="max-width:300px; margin:5px;">`;
+        blogArea.innerHTML += imgToInsert;
+
+      } else if (file.type.startsWith("video/")) {
+        const video = document.createElement("video");
+        video.src = url;
+        video.controls = true;
+        video.style.maxWidth = "200px";
+        video.style.margin = "5px";
+        preview.appendChild(video);
+
+        const videoToInsert = `<video src="${url}" controls style="max-width:300px; margin:5px;"></video>`;
+        blogArea.innerHTML += videoToInsert;
+      }
+    });
+  });
+
+  function downloadBlog() {
+    const content = document.getElementById("blogPostArea").innerHTML;
+    const blob = new Blob([`<html><body>${content}</body></html>`], { type: "text/html" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "EC_News_Blog.html";
+    link.click();
+  }
+
+  async function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const blogContent = document.getElementById("blogPostArea").innerText;
+
+    const splitText = doc.splitTextToSize(blogContent, 180);
+    doc.text(splitText, 10, 20);
+    doc.save("EC_News_Blog.pdf");
+  }
+</script>
 
   <script>
     function generateImage() {
@@ -145,6 +237,3 @@
 </script>
 </body>
 </html>
-
-
-
