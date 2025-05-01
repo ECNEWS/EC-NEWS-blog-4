@@ -1,1 +1,108 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>छवि संपादक - EC News</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('https://source.unsplash.com/1600x900/?ai,technology,india') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: white;
+    }
 
+    header {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      background: #00c853;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00a044;
+    }
+
+    #preview {
+      margin-top: 20px;
+      border-radius: 8px;
+      max-width: 100%;
+    }
+
+    #downloadBtn {
+      display: none;
+      margin-top: 10px;
+      background: #2196f3;
+    }
+
+    #flag {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+    }
+  </style>
+</head>
+<body>
+  <img id="flag" src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg" alt="Indian Flag">
+  <header>🖼️ EC NEWS AI छवि संपादक</header>
+
+  <div class="container">
+    <input type="file" id="imageInput" accept="image/*">
+    <textarea id="textInput" placeholder="AI के लिए टेक्स्ट डालें (उदाहरण: एक किसान खेत में काम कर रहा है)"></textarea>
+    <button onclick="generateImage()">AI से छवि बनाएँ</button>
+
+    <img id="preview" src="" alt="Preview" style="display:none;">
+    <a id="downloadBtn" download="ai-image.png">⬇️ छवि डाउनलोड करें</a>
+  </div>
+
+  <script>
+    function generateImage() {
+      const text = document.getElementById('textInput').value;
+      if (!text) {
+        alert("कृपया कुछ टेक्स्ट डालें!");
+        return;
+      }
+
+      const imageUrl = `https://source.unsplash.com/600x400/?${encodeURIComponent(text)}`;
+      const preview = document.getElementById('preview');
+      const downloadBtn = document.getElementById('downloadBtn');
+
+      preview.src = imageUrl;
+      preview.style.display = 'block';
+
+      preview.onload = function () {
+        downloadBtn.href = imageUrl;
+        downloadBtn.style.display = 'inline-block';
+      }
+    }
+  </script>
+</body>
+</html>
