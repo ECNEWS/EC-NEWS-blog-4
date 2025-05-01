@@ -103,14 +103,38 @@
       }
     }
 
-    function downloadImage() {
-      const output = document.getElementById('outputImage');
-      const link = document.createElement('a');
-      link.href = output.src;
-      link.download = 'ECNEWS_image.png';
-      link.click();
-    }
-  </script>
+    <script>
+  function generateImage() {
+    const input = document.getElementById('imageInput');
+    const text = document.getElementById('textInput').value;
+    const output = document.getElementById('outputImage');
+    const downloadBtn = document.getElementById('downloadBtn');
 
-</body>
-</html>
+    if (input.files.length > 0) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        output.src = e.target.result;
+        output.style.display = 'block';
+        downloadBtn.style.display = 'inline-block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    } else if (text.trim()) {
+      alert("आपने केवल टेक्स्ट लिखा है — भविष्य में AI इसे इमेज में बदल सकेगा।");
+      output.style.display = 'none';
+      downloadBtn.style.display = 'none';
+    } else {
+      alert("कृपया एक फोटो चुनें या AI टेक्स्ट डालें।");
+      output.style.display = 'none';
+      downloadBtn.style.display = 'none';
+    }
+  }
+
+  function downloadImage() {
+    const output = document.getElementById('outputImage');
+    const link = document.createElement('a');
+    link.href = output.src;
+    link.download = 'ECNEWS_image.png';
+    link.click();
+  }
+</script>
+
