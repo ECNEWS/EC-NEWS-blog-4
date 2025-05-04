@@ -2,243 +2,147 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>EC NEWS AI छवि संपादक</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #e0f7fa, #fce4ec);
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
-
-    #flag {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 60px;
-    }
-
-    header {
-      font-size: 28px;
-      font-weight: bold;
-      margin-top: 20px;
-      margin-bottom: 30px;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    input[type="file"], textarea {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      font-size: 16px;
-    }
-
-    button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    #outputImage {
-      max-width: 100%;
-      margin-top: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Video with AI</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
+  <div id="root"></div>
+  <script type="text/babel">
+    function App() {
+      const [script, setScript] = React.useState('');
+      const [story, setStory] = React.useState('');
+      const [videoType, setVideoType] = React.useState('youtube');
+      const [generatedContent, setGeneratedContent] = React.useState(null);
+      const [isLoading, setIsLoading] = React.useState(false);
 
-  <img id="flag" src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg" alt="Indian Flag">
-<header>🖼️ EC NEWS AI छवि संपादक</header>
-
-<div class="container">
-  <!-- AI छवि जनरेटर -->
-  <input type="file" id="imageInput" accept="image/*">
-  <textarea id="textInput" placeholder="AI के लिए टेक्स्ट डालें (उदाहरण: एक किसान खेत में काम कर रहा है)"></textarea>
-  <button onclick="generateImage()">AI से छवि बनाएँ</button>
-
-  <img id="outputImage" src="" alt="Generated Image" style="display:none;">
-  <br>
-  <button id="downloadBtn" onclick="downloadImage()" style="display:none;">📥 छवि डाउनलोड करें</button>
-
-  <hr>
-
-  <!-- 📸 फोटो/विडियो गैलरी बटन -->
-<button onclick="document.getElementById('mediaUpload').click()">📸 फोटो/विडियो गैलरी खोलें</button>
-<input type="file" id="mediaUpload" accept="image/*,video/*" multiple style="display:none;" onchange="previewMedia(event)">
-<div id="mediaPreview" style="margin-top: 10px;"></div>
-
-<hr>
-
-<!-- 🎥 विडियो गॅलरी + बटन -->
-<h2>🎥 विडियो गॅलरी +</h2>
-<button onclick="document.getElementById('mediaUpload').click()">📁 विडियो/फोटो जोड़ें</button>
-
-  <hr>
-
-  <!-- 📝 ब्लॉग पोस्ट एरिया -->
-  <h2>📝 ब्लॉग पोस्ट</h2>
-  <div id="blogPostArea" contenteditable="true" style="border:1px solid #ccc; padding:10px; min-height:100px;">
-    यहाँ पर आप ब्लॉग लिख सकते हैं और मीडिया सीधे नीचे जुड़ जाएगा...
-  </div>
-  <br>
-  <button onclick="downloadBlog()">📝 HTML ब्लॉग डाउनलोड करें</button>
-  <button onclick="downloadPDF()">📄 ब्लॉग PDF में डाउनलोड करें</button>
-</div>
-
-<!-- jsPDF CDN (PDF जनरेट करने के लिए) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script>
-  function generateImage() {
-    const text = document.getElementById("textInput").value;
-    const outputImage = document.getElementById("outputImage");
-    outputImage.src = "https://via.placeholder.com/300x200.png?text=" + encodeURIComponent(text);
-    outputImage.style.display = "block";
-    document.getElementById("downloadBtn").style.display = "inline-block";
-  }
-
-  function downloadImage() {
-    const image = document.getElementById("outputImage");
-    const link = document.createElement('a');
-    link.href = image.src;
-    link.download = 'AI_Image.png';
-    link.click();
-  }
-
-  document.getElementById("mediaUpload").addEventListener("change", function(event) {
-    const preview = document.getElementById("mediaPreview");
-    const blogArea = document.getElementById("blogPostArea");
-
-    preview.innerHTML = "";
-    Array.from(event.target.files).forEach(file => {
-      const url = URL.createObjectURL(file);
-
-      if (file.type.startsWith("image/")) {
-        const img = document.createElement("img");
-        img.src = url;
-        img.style.maxWidth = "150px";
-        img.style.margin = "5px";
-        preview.appendChild(img);
-
-        const imgToInsert = `<img src="${url}" style="max-width:300px; margin:5px;">`;
-        blogArea.innerHTML += imgToInsert;
-
-      } else if (file.type.startsWith("video/")) {
-        const video = document.createElement("video");
-        video.src = url;
-        video.controls = true;
-        video.style.maxWidth = "200px";
-        video.style.margin = "5px";
-        preview.appendChild(video);
-
-        const videoToInsert = `<video src="${url}" controls style="max-width:300px; margin:5px;"></video>`;
-        blogArea.innerHTML += videoToInsert;
-      }
-    });
-  });
-
-  function downloadBlog() {
-    const content = document.getElementById("blogPostArea").innerHTML;
-    const blob = new Blob([`<html><body>${content}</body></html>`], { type: "text/html" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "EC_News_Blog.html";
-    link.click();
-  }
-
-  async function downloadPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const blogContent = document.getElementById("blogPostArea").innerText;
-
-    const splitText = doc.splitTextToSize(blogContent, 180);
-    doc.text(splitText, 10, 20);
-    doc.save("EC_News_Blog.pdf");
-  }
-</script>
-
-  <script>
-    function generateImage() {
-      const input = document.getElementById('imageInput');
-      const text = document.getElementById('textInput').value;
-      const output = document.getElementById('outputImage');
-      const downloadBtn = document.getElementById('downloadBtn');
-
-      if (input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          output.src = e.target.result;
-          output.style.display = 'block';
-          downloadBtn.style.display = 'inline-block';
+      const handleGenerate = async () => {
+        setIsLoading(true);
+        // प्लेसहोल्डर: AI API कॉल यहाँ होगा
+        try {
+          // सिम्युलेटेड AI जनरेशन
+          const simulatedVideo = {
+            type: videoType,
+            url: `https://example.com/generated-${videoType}.mp4`,
+            thumbnail: `https://example.com/thumbnail-${videoType}.jpg`
+          };
+          const simulatedImage = {
+            url: `https://example.com/generated-image.jpg`
+          };
+          setGeneratedContent({
+            video: simulatedVideo,
+            image: simulatedImage,
+            script: script,
+            story: story
+          });
+        } catch (error) {
+          console.error('Error generating content:', error);
+          alert('कंटेंट जनरेट करने में त्रुटि हुई।');
         }
-        reader.readAsDataURL(input.files[0]);
-      } else if (text.trim()) {
-        // Future AI API से इमेज जनरेट हो सकेगा यहाँ
-        alert("AI इमेज जनरेशन API भविष्य में जोड़ा जाएगा।");
-      } else {
-        alert("कृपया एक छवि अपलोड करें या AI टेक्स्ट दर्ज करें।");
-      }
-    }
-
-    ...
-<img id="outputImage" style="display: none;">
-<br>
-<button id="downloadBtn" onclick="downloadImage()" style="display: none;">⬇️ इमेज डाउनलोड करें</button>
-
-<!-- यही स्क्रिप्ट यहाँ डालें -->
-<script>
-  function generateImage() {
-    const input = document.getElementById('imageInput');
-    const text = document.getElementById('textInput').value;
-    const output = document.getElementById('outputImage');
-    const downloadBtn = document.getElementById('downloadBtn');
-
-    if (input.files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        output.src = e.target.result;
-        output.style.display = 'block';
-        downloadBtn.style.display = 'inline-block';
+        setIsLoading(false);
       };
-      reader.readAsDataURL(input.files[0]);
-    } else if (text.trim()) {
-      alert("आपने केवल टेक्स्ट लिखा है — भविष्य में AI इसे इमेज में बदल सकेगा।");
-      output.style.display = 'none';
-      downloadBtn.style.display = 'none';
-    } else {
-      alert("कृपया एक फोटो चुनें या AI टेक्स्ट डालें।");
-      output.style.display = 'none';
-      downloadBtn.style.display = 'none';
-    }
-  }
 
-  function downloadImage() {
-    const output = document.getElementById('outputImage');
-    const link = document.createElement('a');
-    link.href = output.src;
-    link.download = 'ECNEWS_image.png';
-    link.click();
-  }
-</script>
+      const handleDownload = (url, type) => {
+        // प्लेसहोल्डर: वास्तविक डाउनलोड कार्यक्षमता
+        alert(`${type} डाउनलोड हो रहा है: ${url}`);
+      };
+
+      return (
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
+          <h1 className="text-3xl font-bold mb-6">AI के साथ वीडियो बनाएं</h1>
+          <div className="w-full max-w-2xl bg-white p-6 rounded-lg shadow-md">
+            <div className="mb-4">
+              <label className="block text-lg font-medium mb-2">स्क्रिप्ट लिखें</label>
+              <textarea
+                className="w-full p-2 border rounded-md"
+                rows="4"
+                value={script}
+                onChange={(e) => setScript(e.target.value)}
+                placeholder="यहाँ अपनी स्क्रिप्ट लिखें..."
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-lg font-medium mb-2">कहानी लिखें</label>
+              <textarea
+                className="w-full p-2 border rounded-md"
+                rows="4"
+                value={story}
+                onChange={(e) => setStory(e.target.value)}
+                placeholder="यहाँ अपनी कहानी लिखें..."
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-lg font-medium mb-2">वीडियो का प्रकार चुनें</label>
+              <select
+                className="w-full p-2 border rounded-md"
+                value={videoType}
+                onChange={(e) => setVideoType(e.target.value)}
+              >
+                <option value="youtube">यूट्यूब वीडियो</option>
+                <option value="short">शॉर्ट वीडियो</option>
+                <option value="short_film">शॉर्ट फिल्म</option>
+              </select>
+            </div>
+            <button
+              className="w-full bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+              onClick={handleGenerate}
+              disabled={isLoading || !script || !story}
+            >
+              {isLoading ? 'जनरेट हो रहा है...' : 'AI के साथ वीडियो बनाएं'}
+            </button>
+          </div>
+
+          {generatedContent && (
+            <div className="w-full max-w-2xl mt-6 bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-bold mb-4">जनरेटेड कंटेंट</h2>
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">स्क्रिप्ट</h3>
+                <p className="p-2 bg-gray-100 rounded-md">{generatedContent.script}</p>
+              </div>
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">कहानी</h3>
+                <p className="p-2 bg-gray-100 rounded-md">{generatedContent.story}</p>
+              </div>
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">जनरेटेड वीडियो</h3>
+                <video
+                  className="w-full rounded-md"
+                  controls
+                  src={generatedContent.video.url}
+                  poster={generatedContent.video.thumbnail}
+                />
+                <button
+                  className="mt-2 bg-green-600 text-white p-2 rounded-md hover:bg-green-700"
+                  onClick={() => handleDownload(generatedContent.video.url, 'वीडियो')}
+                >
+                  वीडियो डाउनलोड करें
+                </button>
+              </div>
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">जनरेटेड इमेज</h3>
+                <img
+                  className="w-full rounded-md"
+                  src={generatedContent.image.url}
+                  alt="जनरेटेड इमेज"
+                />
+                <button
+                  className="mt-2 bg-green-600 text-white p-2 rounded-md hover:bg-green-700"
+                  onClick={() => handleDownload(generatedContent.image.url, 'इमेज')}
+                >
+                  इमेज डाउनलोड करें
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>
