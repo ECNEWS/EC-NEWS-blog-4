@@ -1,1 +1,148 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Video with AI</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    function App() {
+      const [script, setScript] = React.useState('');
+      const [story, setStory] = React.useState('');
+      const [videoType, setVideoType] = React.useState('youtube');
+      const [generatedContent, setGeneratedContent] = React.useState(null);
+      const [isLoading, setIsLoading] = React.useState(false);
 
+      const handleGenerate = async () => {
+        setIsLoading(true);
+        // प्लेसहोल्डर: AI API कॉल यहाँ होगा
+        try {
+          // सिम्युलेटेड AI जनरेशन
+          const simulatedVideo = {
+            type: videoType,
+            url: `https://example.com/generated-${videoType}.mp4`,
+            thumbnail: `https://example.com/thumbnail-${videoType}.jpg`
+          };
+          const simulatedImage = {
+            url: `https://example.com/generated-image.jpg`
+          };
+          setGeneratedContent({
+            video: simulatedVideo,
+            image: simulatedImage,
+            script: script,
+            story: story
+          });
+        } catch (error) {
+          console.error('Error generating content:', error);
+          alert('कंटेंट जनरेट करने में त्रुटि हुई।');
+        }
+        setIsLoading(false);
+      };
+
+      const handleDownload = (url, type) => {
+        // प्लेसहोल्डर: वास्तविक डाउनलोड कार्यक्षमता
+        alert(`${type} डाउनलोड हो रहा है: ${url}`);
+      };
+
+      return (
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
+          <h1 className="text-3xl font-bold mb-6">AI के साथ वीडियो बनाएं</h1>
+          <div className="w-full max-w-2xl bg-white p-6 rounded-lg shadow-md">
+            <div className="mb-4">
+              <label className="block text-lg font-medium mb-2">स्क्रिप्ट लिखें</label>
+              <textarea
+                className="w-full p-2 border rounded-md"
+                rows="4"
+                value={script}
+                onChange={(e) => setScript(e.target.value)}
+                placeholder="यहाँ अपनी स्क्रिप्ट लिखें..."
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-lg font-medium mb-2">कहानी लिखें</label>
+              <textarea
+                className="w-full p-2 border rounded-md"
+                rows="4"
+                value={story}
+                onChange={(e) => setStory(e.target.value)}
+                placeholder="यहाँ अपनी कहानी लिखें..."
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-lg font-medium mb-2">वीडियो का प्रकार चुनें</label>
+              <select
+                className="w-full p-2 border rounded-md"
+                value={videoType}
+                onChange={(e) => setVideoType(e.target.value)}
+              >
+                <option value="youtube">यूट्यूब वीडियो</option>
+                <option value="short">शॉर्ट वीडियो</option>
+                <option value="short_film">शॉर्ट फिल्म</option>
+              </select>
+            </div>
+            <button
+              className="w-full bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+              onClick={handleGenerate}
+              disabled={isLoading || !script || !story}
+            >
+              {isLoading ? 'जनरेट हो रहा है...' : 'AI के साथ वीडियो बनाएं'}
+            </button>
+          </div>
+
+          {generatedContent && (
+            <div className="w-full max-w-2xl mt-6 bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-bold mb-4">जनरेटेड कंटेंट</h2>
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">स्क्रिप्ट</h3>
+                <p className="p-2 bg-gray-100 rounded-md">{generatedContent.script}</p>
+              </div>
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">कहानी</h3>
+                <p className="p-2 bg-gray-100 rounded-md">{generatedContent.story}</p>
+              </div>
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">जनरेटेड वीडियो</h3>
+                <video
+                  className="w-full rounded-md"
+                  controls
+                  src={generatedContent.video.url}
+                  poster={generatedContent.video.thumbnail}
+                />
+                <button
+                  className="mt-2 bg-green-600 text-white p-2 rounded-md hover:bg-green-700"
+                  onClick={() => handleDownload(generatedContent.video.url, 'वीडियो')}
+                >
+                  वीडियो डाउनलोड करें
+                </button>
+              </div>
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">जनरेटेड इमेज</h3>
+                <img
+                  className="w-full rounded-md"
+                  src={generatedContent.image.url}
+                  alt="जनरेटेड इमेज"
+                />
+                <button
+                  className="mt-2 bg-green-600 text-white p-2 rounded-md hover:bg-green-700"
+                  onClick={() => handleDownload(generatedContent.image.url, 'इमेज')}
+                >
+                  इमेज डाउनलोड करें
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
